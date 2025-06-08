@@ -119,3 +119,43 @@ git config --global alias.amend '!git add -u && git commit --amend --no-edit && 
 
 alias kp='ps -ef | fzf --multi | awk '\''{print $2}'\'' | xargs sudo kill -9'
 alias git-update-all='find . -type d -name .git -execdir git pull --rebase --autostash \;'
+
+
+
+# Comments for later:
+
+# export TERM="xterm-256color"
+
+# # Custom plugin directory (without OMZ)
+# export ZSH_CUSTOM="$HOME/.config/zsh/plugins"
+
+# # Source plugins directly instead of using OMZ plugin system
+# [[ -f "$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh"
+# [[ -f "$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+# [[ -f "$ZSH_CUSTOM/zsh-completions/zsh-completions.plugin.zsh" ]] && source "$ZSH_CUSTOM/zsh-completions/zsh-completions.plugin.zsh"
+
+# # History substring search (can be installed standalone)
+# [[ -f "$ZSH_CUSTOM/zsh-history-substring-search/zsh-history-substring-search.zsh" ]] && source "$ZSH_CUSTOM/zsh-history-substring-search/zsh-history-substring-search.zsh"
+# bindkey '^[[A' history-substring-search-up
+# bindkey '^[[B' history-substring-search-down
+
+# # fzf-tab (standalone)
+# [[ -f "$ZSH_CUSTOM/fzf-tab/fzf-tab.plugin.zsh" ]] && source "$ZSH_CUSTOM/fzf-tab/fzf-tab.plugin.zsh"
+
+# # Replace Powerlevel10k with Starship or pure prompt
+# eval "$(starship init zsh)"  # or use 'pure' prompt
+
+# # Keep your existing custom functions and aliases
+# # ...existing code...
+
+### Installation commands:
+# mkdir -p ~/.config/zsh/plugins
+# cd ~/.config/zsh/plugins
+
+# git clone https://github.com/zsh-users/zsh-autosuggestions
+# git clone https://github.com/zsh-users/zsh-syntax-highlighting
+# git clone https://github.com/zsh-users/zsh-completions
+# git clone https://github.com/zsh-users/zsh-history-substring-search
+# git clone https://github.com/Aloxaf/fzf-tab
+
+# curl -sS https://starship.rs/install.sh | sh # pl10k alternative (?)
