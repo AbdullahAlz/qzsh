@@ -25,7 +25,7 @@ export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 NPM_PACKAGES="${HOME}/.npm"
 PATH="$NPM_PACKAGES/bin:$PATH"
 
-[[ -s "$HOME/.config/czsh/marker/marker.sh" ]] && source "$HOME/.config/czsh/marker/marker.sh"
+[[ -s "$CONFIGDIR/marker/marker.sh" ]] && source "$CONFIGDIR/marker/marker.sh"
 [[ -f "$CONFIGDIR/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$CONFIGDIR/zsh-autosuggestions/zsh-autosuggestions.zsh"
 [[ -f "$CONFIGDIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$CONFIGDIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 [[ -f "$CONFIGDIR/zsh-completions/zsh-completions.plugin.zsh" ]] && source "$CONFIGDIR/zsh-completions/zsh-completions.plugin.zsh"

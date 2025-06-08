@@ -1,41 +1,4 @@
 #!/bin/bash
-###################### Global Variables ######################
-
-if [ -n "$SUDO_USER" ]; then
-    USER_HOME=$(eval echo "~$SUDO_USER")
-else
-    USER_HOME="$HOME"
-fi
-
-POWERLEVEL10K_REPO="https://github.com/romkatv/powerlevel10k.git"
-FZF_REPO="https://github.com/junegunn/fzf.git"
-LAZYDOCKER_REPO="https://github.com/jesseduffield/lazydocker.git"
-
-CONFIGDIR="$USER_HOME/.config/qzsh"
-POWERLEVEL_10K_PATH=$CONFIGDIR/powerlevel10k
-FZF_INSTALLATION_PATH=$CONFIGDIR/fzf  
-LAZYDOCKER_INSTALLATION_PATH=$CONFIGDIR/lazydocker
-
-declare -A PLUGINS_MAP
-
-export PLUGINS_MAP=(
-    ["fzf-tab"]="https://github.com/Aloxaf/fzf-tab.git"
-    ["zsh-syntax-highlighting"]="https://github.com/zsh-users/zsh-syntax-highlighting.git"
-    ["zsh-autosuggestions"]="https://github.com/zsh-users/zsh-autosuggestions.git"
-    ["zsh-completions"]="https://github.com/zsh-users/zsh-completions.git"
-    ["history-substring-search"]="https://github.com/zsh-users/zsh-history-substring-search.git"
-    ["z"]="https://github.com/agkozak/zsh-z.git"
-    ["forgit"]="https://github.com/wfxr/forgit.git"
-)
-
-logInfo "Installed following packages: ${installedPackages[*]}"
-
-installpkg "zsh"
-installpkg "git"
-installpkg "curl"
-installpkg "wget"
-installpkg "python3-pip"
-installpkg "fontconfig"
 
 ###################### Functions ######################
 
@@ -59,7 +22,6 @@ logProgress() {
     echo -e "\\033[36m$*\\033[m"
 }
 
-installedPackages=()
 installpkg(){
         if sudo apt install -y "$1" || sudo pacman -S "$1" || sudo dnf install -y "$1" || sudo yum install -y "$1" || sudo brew install "$1" || pkg install "$1"; then
             installedPackages+=("$1")
@@ -70,6 +32,7 @@ installpkg(){
 
 perform_update() {
     if sudo apt update || sudo pacman -Sy || sudo dnf check-update || sudo yum check-update || brew update || pkg update; then
+        logProgress "System update successful.\n"
     else
         logError "System update failed\n"
     fi
@@ -77,13 +40,54 @@ perform_update() {
 
 logWarning "Place your personal zshrc config files under '$HOME/.config/czsh/zshrc/'\n"
 
+if [ -n "$SUDO_USER" ]; then
+    USER_HOME=$(eval echo "~$SUDO_USER")
+else
+    USER_HOME="$HOME"
+fi
+
+###################### Global Variables ######################
+
+POWERLEVEL10K_REPO="https://github.com/romkatv/powerlevel10k.git"
+FZF_REPO="https://github.com/junegunn/fzf.git"
+LAZYDOCKER_REPO="https://github.com/jesseduffield/lazydocker.git"
+
+CONFIGDIR="$USER_HOME/.config/qzsh"
+POWERLEVEL_10K_PATH=$CONFIGDIR/powerlevel10k
+FZF_INSTALLATION_PATH=$CONFIGDIR/fzf  
+LAZYDOCKER_INSTALLATION_PATH=$CONFIGDIR/lazydocker
+
+
+declare -A PLUGINS_MAP
+export PLUGINS_MAP=(
+    ["fzf-tab"]="https://github.com/Aloxaf/fzf-tab.git"
+    ["zsh-syntax-highlighting"]="https://github.com/zsh-users/zsh-syntax-highlighting.git"
+    ["zsh-autosuggestions"]="https://github.com/zsh-users/zsh-autosuggestions.git"
+    ["zsh-completions"]="https://github.com/zsh-users/zsh-completions.git"
+    ["history-substring-search"]="https://github.com/zsh-users/zsh-history-substring-search.git"
+    ["z"]="https://github.com/agkozak/zsh-z.git"
+    ["forgit"]="https://github.com/wfxr/forgit.git"
+)
+
+###################### Script ######################
+
+
+installedPackages=()
+
+installpkg "zsh"
+installpkg "git"
+installpkg "curl"
+installpkg "wget"
+installpkg "python3-pip"
+installpkg "fontconfig"
+
 mkdir -p "$CONFIGDIR"
 mkdir -p "$CONFIGDIR/zshrc"
 mkdir -p "$USER_HOME/.fonts"
 mkdir -p "$USER_HOME/.cache/zsh" # for .zcompdump files
 
 cp -f ./.zshrc $HOME/
-cp -f ./3f4zshrc.zsh $CONFIGDIR
+cp -f ./qzshrc.zsh $CONFIGDIR
 
 if [ -f $HOME/.zcompdump ]; then
     mv $HOME/.zcompdump* $HOME/.cache/zsh/
@@ -149,3 +153,5 @@ for PLUGIN_NAME in "${!PLUGINS_MAP[@]}"; do
         logInfo "$PLUGIN_NAME plugin installed"
     fi
 done
+
+logInfo "Installed following packages: ${installedPackages[*]}"
