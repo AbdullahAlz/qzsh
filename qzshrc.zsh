@@ -1,61 +1,24 @@
 export TERM="xterm-256color"
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+export CONFIGDIR="$HOME/.config/qzsh"
 
-# Path to your oh-my-zsh installation.
-export ZSH_CUSTOM="$HOME/.config/czsh/oh-my-zsh/custom"
-export ZSH="$HOME/.config/czsh/oh-my-zsh";
-
-
+export ZSH_THEME="powerlevel10k/powerlevel10k"
 POWERLEVEL9K_MODE='nerdfont-complete'
-
-ZSH_THEME="powerlevel10k/powerlevel10k"
-
 POWERLEVEL9K_OS_ICON_BACKGROUND="white"
 POWERLEVEL9K_OS_ICON_FOREGROUND="blue"
 POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="white"
 POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="white"
-
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=( status command_execution_time background_jobs ram load)
-
-# more prompt elements that are suggested
-# (public_ip docker_machine pyenv nvm)          https://github.com/bhilburn/powerlevel9k#prompt-customization
-# Note: using public_ip is cool but when connection is down prompt waits for 10-20 seconds
-
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
-
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)clear
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(
-    zsh-completions
-    zsh-autosuggestions # disable when using marker, otherwise enable
-    zsh-syntax-highlighting
-    history-substring-search
-    screen
-    systemd
-    web-search
-    extract
-    z
-    sudo
-    docker
-    fzf-tab
-    forgit
-)
-
-if [[ -f $ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh ]]; then
-    source $ZSH_CUSTOM/plugins/zsh_codex/zsh_codex.plugin.zsh
+if [[ -f $CONFIGDIR/zsh_codex/zsh_codex.plugin.zsh ]]; then
+    source $CONFIGDIR/zsh_codex/zsh_codex.plugin.zsh
     bindkey '^X' create_completion
 fi
 
-
 export PATH=$PATH:~/.local/bin
-
 export PATH=$PATH:~/.config/czsh/bin
 export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 
@@ -63,17 +26,18 @@ NPM_PACKAGES="${HOME}/.npm"
 PATH="$NPM_PACKAGES/bin:$PATH"
 
 [[ -s "$HOME/.config/czsh/marker/marker.sh" ]] && source "$HOME/.config/czsh/marker/marker.sh"
-
-
+[[ -f "$CONFIGDIR/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$CONFIGDIR/zsh-autosuggestions/zsh-autosuggestions.zsh"
+[[ -f "$CONFIGDIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$CONFIGDIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+[[ -f "$CONFIGDIR/zsh-completions/zsh-completions.plugin.zsh" ]] && source "$CONFIGDIR/zsh-completions/zsh-completions.plugin.zsh"
+[[ -f "$CONFIGDIR/zsh-history-substring-search/zsh-history-substring-search.zsh" ]] && source "$CONFIGDIR/zsh-history-substring-search/zsh-history-substring-search.zsh"
+[[ -f "$CONFIGDIR/fzf-tab/fzf-tab.plugin.zsh" ]] && source "$CONFIGDIR/fzf-tab/fzf-tab.plugin.zsh"
+[[ -f "$CONFIGDIR/forgit/forgit.plugin.zsh" ]] && source "$CONFIGDIR/forgit/forgit.plugin.zsh"
+[[ -f "$CONFIGDIR/z/z.plugin.zsh" ]] && source "$CONFIGDIR/z/z.plugin.zsh"
 
 
 SAVEHIST=50000 #save upto 50,000 lines in history. oh-my-zsh default is 10,000
 #setopt hist_ignore_all_dups     # dont record duplicated entries in history during a single session
 
-alias myip="wget -qO- https://wtfismyip.com/text" # quickly show external ip address
-alias l="ls --hyperlink=auto -lAhrtF"             # show all except . .. , sort by recent, / at the end of folders, clickable
-alias e="exit"
-alias ip="ip --color=auto"
 
 # CUSTOM FUNCTIONS
 
@@ -97,65 +61,59 @@ speedtest() {
     curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python3 -
 }
 
-s() {
-    local query="${1}"
-    
-    # Check if the query is empty and exit with an error message
-    if [[ -z "$query" ]]; then
-        echo "⚠️  No search term provided! Please provide a valid search term. 🔍"
-        return 1
+extract() {
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xjf $1     ;;
+            *.tar.gz)    tar xzf $1     ;;
+            *.bz2)       bunzip2 $1     ;;
+            *.rar)       unrar e $1     ;;
+            *.gz)        gunzip $1      ;;
+            *.tar)       tar xf $1      ;;
+            *.tbz2)      tar xjf $1     ;;
+            *.tgz)       tar xzf $1     ;;
+            *.zip)       unzip $1       ;;
+            *.Z)         uncompress $1  ;;
+            *.7z)        7z x $1        ;;
+            *)     echo "'$1' cannot be extracted via extract()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
     fi
-    
-    rg --line-number "$query" | \
-        fzf --preview "batcat --style=numbers --color=always --highlight-line {2} {1}" \
-            --delimiter : --preview-window=up:wrap
 }
 
+sudo-command-line() {
+    [[ -z $BUFFER ]] && zle up-history
+    if [[ $BUFFER == sudo\ * ]]; then
+        LBUFFER="${LBUFFER#sudo }"
+    elif [[ $BUFFER == $EDITOR\ * ]]; then
+        LBUFFER="${LBUFFER/#$EDITOR/sudoedit}"
+    elif [[ $BUFFER == sudoedit\ * ]]; then
+        LBUFFER="${LBUFFER/#sudoedit/$EDITOR}"
+    else
+        LBUFFER="sudo $LBUFFER"
+    fi
+}
+zle -N sudo-command-line
+bindkey "\e\e" sudo-command-line
 
-f() { find . -type f -print0 | fzf --read0 --preview 'batcat --color=always {}' | xargs -0 file -b; }
+google() {
+    $BROWSER "https://www.google.com/search?q=${(j:+:)@}"
+}
+
+duckduckgo() {
+    $BROWSER "https://duckduckgo.com/?q=${(j:+:)@}"
+}
+
+sp() {
+    $BROWSER "https://www.startpage.com/do/search?query=${(j:+:)@}"
+}
 
 git config --global alias.amend '!git add -u && git commit --amend --no-edit && git push -f'
-
-
+alias myip="wget -qO- https://wtfismyip.com/text" # quickly show external ip address
+alias l="ls --hyperlink=auto -lAhrtF"             # show all except . .. , sort by recent, / at the end of folders, clickable
+alias e="exit"
+alias ip="ip --color=auto"
 alias kp='ps -ef | fzf --multi | awk '\''{print $2}'\'' | xargs sudo kill -9'
 alias git-update-all='find . -type d -name .git -execdir git pull --rebase --autostash \;'
-
-
-
-# Comments for later:
-
-# export TERM="xterm-256color"
-
-# # Custom plugin directory (without OMZ)
-# export ZSH_CUSTOM="$HOME/.config/zsh/plugins"
-
-# # Source plugins directly instead of using OMZ plugin system
-# [[ -f "$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$ZSH_CUSTOM/zsh-autosuggestions/zsh-autosuggestions.zsh"
-# [[ -f "$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$ZSH_CUSTOM/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
-# [[ -f "$ZSH_CUSTOM/zsh-completions/zsh-completions.plugin.zsh" ]] && source "$ZSH_CUSTOM/zsh-completions/zsh-completions.plugin.zsh"
-
-# # History substring search (can be installed standalone)
-# [[ -f "$ZSH_CUSTOM/zsh-history-substring-search/zsh-history-substring-search.zsh" ]] && source "$ZSH_CUSTOM/zsh-history-substring-search/zsh-history-substring-search.zsh"
-# bindkey '^[[A' history-substring-search-up
-# bindkey '^[[B' history-substring-search-down
-
-# # fzf-tab (standalone)
-# [[ -f "$ZSH_CUSTOM/fzf-tab/fzf-tab.plugin.zsh" ]] && source "$ZSH_CUSTOM/fzf-tab/fzf-tab.plugin.zsh"
-
-# # Replace Powerlevel10k with Starship or pure prompt
-# eval "$(starship init zsh)"  # or use 'pure' prompt
-
-# # Keep your existing custom functions and aliases
-# # ...existing code...
-
-### Installation commands:
-# mkdir -p ~/.config/zsh/plugins
-# cd ~/.config/zsh/plugins
-
-# git clone https://github.com/zsh-users/zsh-autosuggestions
-# git clone https://github.com/zsh-users/zsh-syntax-highlighting
-# git clone https://github.com/zsh-users/zsh-completions
-# git clone https://github.com/zsh-users/zsh-history-substring-search
-# git clone https://github.com/Aloxaf/fzf-tab
-
-# curl -sS https://starship.rs/install.sh | sh # pl10k alternative (?)
+alias c='clear'

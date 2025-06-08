@@ -11,7 +11,6 @@ POWERLEVEL10K_REPO="https://github.com/romkatv/powerlevel10k.git"
 FZF_REPO="https://github.com/junegunn/fzf.git"
 LAZYDOCKER_REPO="https://github.com/jesseduffield/lazydocker.git"
 
-
 CONFIGDIR="$USER_HOME/.config/qzsh"
 POWERLEVEL_10K_PATH=$CONFIGDIR/powerlevel10k
 FZF_INSTALLATION_PATH=$CONFIGDIR/fzf  
@@ -25,6 +24,8 @@ export PLUGINS_MAP=(
     ["zsh-autosuggestions"]="https://github.com/zsh-users/zsh-autosuggestions.git"
     ["zsh-completions"]="https://github.com/zsh-users/zsh-completions.git"
     ["history-substring-search"]="https://github.com/zsh-users/zsh-history-substring-search.git"
+    ["z"]="https://github.com/agkozak/zsh-z.git"
+    ["forgit"]="https://github.com/wfxr/forgit.git"
 )
 
 logInfo "Installed following packages: ${installedPackages[*]}"
@@ -35,7 +36,6 @@ installpkg "curl"
 installpkg "wget"
 installpkg "python3-pip"
 installpkg "fontconfig"
-
 
 ###################### Functions ######################
 
@@ -74,7 +74,6 @@ perform_update() {
         logError "System update failed\n"
     fi
 }
-
 
 logWarning "Place your personal zshrc config files under '$HOME/.config/czsh/zshrc/'\n"
 
@@ -115,7 +114,8 @@ fi
 
 fc-cache -fv $HOME/.fonts
 
-# Install fzf
+logProgress "Installing fuzzy finder"
+
 
 if [ -d $FZF_INSTALLATION_PATH ]; then
     git -C $FZF_INSTALLATION_PATH pull
@@ -125,7 +125,7 @@ else
     "$FZF_INSTALLATION_PATH"/install --all --key-bindings --completion --no-update-rc
 fi
 
-# Install lazydocker
+logProgress "Installing lazydocker"
 
 if [ -d "$LAZYDOCKER_INSTALLATION_PATH" ]; then
     git -C $LAZYDOCKER_INSTALLATION_PATH pull
