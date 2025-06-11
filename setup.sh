@@ -1,5 +1,7 @@
 #!/bin/bash
 
+trap "exit" SIGINT
+
 ###################### Functions ######################
 
 echoIULRed() {
@@ -118,7 +120,7 @@ export PLUGINS_MAP=(
 
 # backup existing .zshrc
 if mv -n $HOME/.zshrc $HOME/.zshrc-backup-"$(date +"%Y-%m-%d")"; then
-    logInfo -e "Backed up the current .zshrc to .zshrc-backup-date\n"
+    logInfo "Backed up the current .zshrc to .zshrc-backup-date\n"
 fi
 
 installedPackages=()
