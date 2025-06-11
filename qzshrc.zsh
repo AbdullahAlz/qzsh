@@ -1,7 +1,6 @@
 export TERM="xterm-256color"
 export CONFIGDIR="$HOME/.config/qzsh"
 
-# Source powerlevel10k theme
 if [[ -f "$CONFIGDIR/themes/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
     source "$CONFIGDIR/themes/powerlevel10k/powerlevel10k.zsh-theme"
 fi
@@ -13,8 +12,18 @@ POWERLEVEL9K_OS_ICON_FOREGROUND="blue"
 POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="white"
 POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="white"
-POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=( status command_execution_time background_jobs ram load)
-POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
+typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
+  status                  # exit status of last command
+  command_execution_time  # how long last command took
+  background_jobs         # number of background jobs
+  ram                     # RAM usage
+  load                    # system load
+)
+typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
+  context         # user@hostname
+  dir             # current directory
+  vcs             # git info (branch, status)
+)
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 
 
@@ -25,7 +34,6 @@ fi
 
 export PATH=$PATH:~/.local/bin
 export PATH=$PATH:~/.config/qzsh/bin
-export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 
 NPM_PACKAGES="${HOME}/.npm"
 PATH="$NPM_PACKAGES/bin:$PATH"
@@ -112,33 +120,11 @@ wiki() {
 
 
 git config --global alias.amend '!git add -u && git commit --amend --no-edit && git push -f'
-alias myip="wget -qO- https://wtfismyip.com/text" # quickly show external ip address
-alias l="ls -lah"
 alias e="exit"
 alias ip="ip --color=auto"
 alias kp='ps -ef | fzf --multi | awk '\''{print $2}'\'' | xargs sudo kill -9'
 alias git-update-all='find . -type d -name .git -execdir git pull --rebase --autostash \;'
-alias c='clear'
 
-# Debug function to check plugin status
-qzsh-debug() {
-    echo "=== QZSH Debug Information ==="
-    echo "Config directory: $CONFIGDIR"
-    echo "Powerlevel10k theme: $([ -f "$CONFIGDIR/themes/powerlevel10k/powerlevel10k.zsh-theme" ] && echo "✅ Found" || echo "❌ Missing")"
-    echo "Plugins status:"
-    for plugin in zsh-autosuggestions zsh-syntax-highlighting zsh-completions history-substring-search fzf-tab forgit z; do
-        if [[ -f "$CONFIGDIR/plugins/$plugin/"*.zsh ]] || [[ -f "$CONFIGDIR/plugins/$plugin/"*.plugin.zsh ]]; then
-            echo "  $plugin: ✅ Loaded"
-        else
-            echo "  $plugin: ❌ Missing"
-        fi
-    done
-    echo "FZF: $([ -f "$HOME/.config/qzsh/fzf/bin/fzf" ] && echo "✅ Installed" || echo "❌ Missing")"
-    echo "Key bindings:"
-    echo "  Ctrl+X: $(bindkey | grep -q '\^X' && echo "✅ zsh_codex" || echo "❌ Not bound")"
-    echo "  Ctrl+R: $(bindkey | grep -q '\^R' && echo "✅ FZF history" || echo "❌ Not bound")"
-    echo "=========================="
-}
 
 # Ensure key bindings are set up properly for history substring search
 if [[ -f "$CONFIGDIR/plugins/history-substring-search/zsh-history-substring-search.zsh" ]]; then
