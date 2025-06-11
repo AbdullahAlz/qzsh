@@ -1,5 +1,7 @@
 source "$HOME/.config/qzsh/qzshrc.zsh"
-# This enables any user 
+
+# Any zshrc configurations under the folder ~/.config/qzsh/zshrc/ will override the default qzsh configs.
+# Place all of your personal configurations over there
 ZSH_CONFIGS_DIR="$HOME/.config/qzsh/zshrc"
 if [ "$(ls -A $ZSH_CONFIGS_DIR)" ]; then
     for file in "$ZSH_CONFIGS_DIR"/* "$ZSH_CONFIGS_DIR"/.*; do
