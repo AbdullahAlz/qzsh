@@ -116,6 +116,11 @@ export PLUGINS_MAP=(
 
 ###################### Script ######################
 
+# backup existing .zshrc
+if mv -n $HOME/.zshrc $HOME/.zshrc-backup-"$(date +"%Y-%m-%d")"; then
+    logInfo -e "Backed up the current .zshrc to .zshrc-backup-date\n"
+fi
+
 installedPackages=()
 perform_update
 installpkg "zsh"
