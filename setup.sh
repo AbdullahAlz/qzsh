@@ -44,10 +44,9 @@ install_fzf() {
         git -C $FZF_INSTALLATION_PATH pull
         $FZF_INSTALLATION_PATH/install --all --key-bindings --completion --no-update-rc
     else
-        git clone --branch 0.60.3 --depth 1 $FZF_REPO $FZF_INSTALLATION_PATH
+        git clone --depth 1 $FZF_REPO $FZF_INSTALLATION_PATH
         "$FZF_INSTALLATION_PATH"/install --all --key-bindings --completion --no-update-rc
     fi
-
 }
 
 install_powerlevel10k() {
@@ -97,29 +96,10 @@ POWERLEVEL10K_REPO="https://github.com/romkatv/powerlevel10k.git"
 FZF_REPO="https://github.com/junegunn/fzf.git"
 LAZYDOCKER_REPO="https://github.com/jesseduffield/lazydocker.git"
 
-noninteractive_flag=true
-cp_hist_flag=false
-zsh_codex_flag=false
-
-for arg in "$@"; do
-    case $arg in
-    --cp-hist | -c)
-        cp_hist_flag=true
-        ;;
-    --interactive | -n)
-        noninteractive_flag=false
-        ;;
-    --codex | -x)
-        zsh_codex_flag=true
-        ;;
-    *)
-        ;;
-    esac
-done
 
 CONFIGDIR="$USER_HOME/.config/qzsh"
 POWERLEVEL_10K_PATH=$CONFIGDIR/themes/powerlevel10k
-FZF_INSTALLATION_PATH=$CONFIGDIR/fzf  
+FZF_INSTALLATION_PATH=$CONFIGDIR/fzf
 LAZYDOCKER_INSTALLATION_PATH=$CONFIGDIR/lazydocker
 PLUGINS_DIR=$CONFIGDIR/plugins
 
@@ -145,23 +125,22 @@ installpkg "wget"
 installpkg "python3-pip"
 installpkg "fontconfig"
 perform_update
+# not tested on non debian systems, needed later by build-fzf-tab-module
 installpkg "autoconf"
 installpkg "ncurses-dev"
 
 mkdir -p "$CONFIGDIR"
-mkdir -p "$CONFIGDIR/zshrc"
+mkdir -p "$CONFIGDIR/zshrc" # for future personal zshrc files
 mkdir -p "$CONFIGDIR/themes"
 mkdir -p "$CONFIGDIR/plugins"
 mkdir -p "$USER_HOME/.fonts"
-mkdir -p "$USER_HOME/.cache/zsh" # for .zcompdump files
 
 cp -f ./.zshrc $USER_HOME/
 cp -f ./qzshrc.zsh $CONFIGDIR
-cp -f ./fzf.zsh $USER_HOME
 
-if [ -f $USER_HOME/.zcompdump ]; then
-    mv $USER_HOME/.zcompdump* $USER_HOME/.cache/zsh/
-fi
+
+logProgress "Installing Powerlevel10k theme"
+
 
 install_powerlevel10k
 
@@ -192,34 +171,8 @@ for PLUGIN_NAME in "${!PLUGINS_MAP[@]}"; do
     fi
 done
 
-if [ "$zsh_codex_flag" = true ]; then
-    logProgress "Configuring zsh_codex"
-    if [ ! -d "$PLUGINS_DIR/zsh_codex" ]; then
-        git clone --depth=1 "https://github.com/samastek/zsh_codex.git" "$PLUGINS_DIR/zsh_codex"
-    fi
-    cp zsh_codex.ini $USER_HOME/.config/ 2>/dev/null || logWarning "zsh_codex.ini not found"
-    pip3 install openai --break-system-packages 2>/dev/null || logWarning "Failed to install openai"
-    pip3 install groq --break-system-packages 2>/dev/null || logWarning "Failed to install groq"
-fi
-
-if [ "$zsh_codex_flag" = true ]; then
-    logInfo "zsh_codex is enabled - use Ctrl+X for AI completions"
-fi
-
-if [ "$noninteractive_flag" = true ]; then
-    logInfo "Installation complete, exit terminal and enter a new zsh session\n"
-    logWarning "Make sure to change zsh to default shell by running: chsh -s $(which zsh)"
-    logInfo "In a new zsh session manually run: build-fzf-tab-module"
-else
-    logWarning "\nSudo access is needed to change default shell\n"
-
-    if chsh -s "$(which zsh)"; then
-        logInfo "Installation complete, exit terminal and enter a new zsh session"
-        logWarning "In a new zsh session manually run: build-fzf-tab-module"
-    else
-        logError "Something is wrong, the password you entered might be wrong\n"
-
-    fi
-fi
-
+echo -e "\\033[1;32mDONE\n\\033[m"
+logInfo "Installation complete, exit terminal and enter a new zsh session"
+logWarning "Make sure to change zsh to default shell by running: chsh -s $(which zsh)"
+logInfo "In a new zsh session manually run: build-fzf-tab-module"
 logInfo "Installed following packages: ${installedPackages[*]}"
