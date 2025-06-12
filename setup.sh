@@ -142,18 +142,39 @@ mkdir -p "$USER_HOME/.cache/zsh" #later used by compinit
 cp -f ./.zshrc $USER_HOME/
 cp -f ./qzshrc.zsh $CONFIGDIR
 
-installedPackages=()
+neededPackages=(
+    "zsh"
+    "git"
+    "curl"
+    "wget"
+    "python3-pip"
+    "fontconfig"
+    "autoconf" # needed later by build-fzf-tab-module
+)
+missing_packages=()
+for package in "${neededPackages[@]}"; do
+    if ! command -v "$package" &>/dev/null; then
+        missing_packages+=("$package")
+    fi
+done
+
+if [ ${#missing_packages[@]} -ne 0 and -z "$SUDO_USER" ]; then 
+    logError "The following packages are missing: ${missing_packages[*]}"
+    logWarning "Want to proceed with installation? sudo required (y/n)"
+    read -r answer
+    if [[ "$answer" != "y" && "$answer" != "Y" ]]; then
+        logError "Installation aborted by user."
+        exit 1
+    fi
+
+fi
 perform_update
-installpkg "zsh"
-installpkg "git"
-installpkg "curl"
-installpkg "wget"
-installpkg "python3-pip"
-installpkg "fontconfig"
-perform_update
-# not tested on non debian systems, needed later by build-fzf-tab-module
-installpkg "autoconf"
-installpkg "ncurses-dev"
+for package in "${missing_packages[@]}"; do
+    logProgress "Installing package: $package"
+    installpkg "$package"
+done
+
+
 
 logProgress "Installing Oh-My-Zsh lib files"
 install_omz_lib "key-bindings.zsh"
@@ -196,5 +217,4 @@ git config --global alias.amend '!git add -u && git commit --amend --no-edit && 
 echo -e "\\033[1;32mDONE\n\\033[m"
 logInfo "Installation complete, exit terminal and enter a new zsh session"
 logWarning "Make sure to change zsh to default shell by running: chsh -s $(which zsh)"
-logInfo "In a new zsh session manually run: build-fzf-tab-module"
-logInfo "Installed following packages: ${installedPackages[*]}"
+logInfo "In a new zsh session manually run: build-fzf-tab-module. You might need to install ncurses-dev(el)"
