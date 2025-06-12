@@ -1,6 +1,6 @@
 # Qzsh
 
-This is my personal Shell configuration, based largely on [Samastek's work](https://github.com/samastek/czsh), while not using [oh-my-zsh](https://www.github.com/ohmyzsh/ohmyzsh) as a plugin manager.
+This is my personal Shell configuration, based largely on [Samastek's czsh](https://github.com/samastek/czsh), while not using [oh-my-zsh](https://www.github.com/ohmyzsh/ohmyzsh) as a plugin manager.
 
 # Installation
 ```bash
