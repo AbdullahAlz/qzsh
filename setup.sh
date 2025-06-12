@@ -42,13 +42,13 @@ perform_update() {
 }
 
 install_fzf() {
-    if [ -d $FZF_INSTALLATION_PATH ]; then
-        git -C $FZF_INSTALLATION_PATH pull
-        $FZF_INSTALLATION_PATH/install --all --key-bindings --completion --no-update-rc
+    if [ -d "$FZF_INSTALLATION_PATH" ]; then
+        git -C "$FZF_INSTALLATION_PATH" pull
     else
-        git clone --depth 1 $FZF_REPO $FZF_INSTALLATION_PATH
-        "$FZF_INSTALLATION_PATH"/install --all --key-bindings --completion --no-update-rc
+        git clone --depth=1 $FZF_REPO "$FZF_INSTALLATION_PATH"
     fi
+
+    "$FZF_INSTALLATION_PATH"/install --bin --key-bindings --completion --no-update-rc
 }
 
 install_powerlevel10k() {
@@ -62,11 +62,10 @@ install_powerlevel10k() {
 install_lazydocker() {
     if [ -d "$LAZYDOCKER_INSTALLATION_PATH" ]; then
         git -C $LAZYDOCKER_INSTALLATION_PATH pull
-        "$LAZYDOCKER_INSTALLATION_PATH"/scripts/install_update_linux.sh
     else
         git clone --depth 1 $LAZYDOCKER_REPO "$LAZYDOCKER_INSTALLATION_PATH"
-        "$LAZYDOCKER_INSTALLATION_PATH"/scripts/install_update_linux.sh
     fi
+    "$LAZYDOCKER_INSTALLATION_PATH"/scripts/install_update_linux.sh
     sleep 3
 
 }
@@ -85,6 +84,15 @@ install_custom_fonts() {
     fi
 }
 
+install_omz_lib() {
+    local lib_url="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/lib/$1"
+    if wget -q --show-progress -O "$CONFIGDIR/lib/$1" "$lib_url"; then
+        logInfo "Downloaded Oh-My-Zsh lib: $1"
+    else
+        logError "Failed to download Oh-My-Zsh lib: $1"
+    fi
+}
+
 ###################### Global Variables ######################
 
 if [ -n "$SUDO_USER" ]; then
@@ -100,10 +108,10 @@ LAZYDOCKER_REPO="https://github.com/jesseduffield/lazydocker.git"
 
 
 CONFIGDIR="$USER_HOME/.config/qzsh"
-POWERLEVEL_10K_PATH=$CONFIGDIR/themes/powerlevel10k
-FZF_INSTALLATION_PATH=$CONFIGDIR/fzf
-LAZYDOCKER_INSTALLATION_PATH=$CONFIGDIR/lazydocker
-PLUGINS_DIR=$CONFIGDIR/plugins
+POWERLEVEL_10K_PATH="$CONFIGDIR/themes/powerlevel10k"
+FZF_INSTALLATION_PATH="$CONFIGDIR/fzf"
+LAZYDOCKER_INSTALLATION_PATH="$CONFIGDIR/lazydocker"
+PLUGINS_DIR="$CONFIGDIR/plugins"
 
 declare -A PLUGINS_MAP
 export PLUGINS_MAP=(
@@ -123,6 +131,17 @@ if mv -n $HOME/.zshrc $HOME/.zshrc-backup-"$(date +"%Y-%m-%d")"; then
     logInfo "Backed up the current .zshrc to .zshrc-backup-date\n"
 fi
 
+mkdir -p "$CONFIGDIR"
+mkdir -p "$CONFIGDIR/zshrc" # for future personal zshrc files
+mkdir -p "$CONFIGDIR/themes"
+mkdir -p "$CONFIGDIR/plugins"
+mkdir -p "$CONFIGDIR/lib"
+mkdir -p "$USER_HOME/.fonts"
+mkdir -p "$USER_HOME/.cache/zsh" #later used by compinit
+
+cp -f ./.zshrc $USER_HOME/
+cp -f ./qzshrc.zsh $CONFIGDIR
+
 installedPackages=()
 perform_update
 installpkg "zsh"
@@ -136,18 +155,11 @@ perform_update
 installpkg "autoconf"
 installpkg "ncurses-dev"
 
-mkdir -p "$CONFIGDIR"
-mkdir -p "$CONFIGDIR/zshrc" # for future personal zshrc files
-mkdir -p "$CONFIGDIR/themes"
-mkdir -p "$CONFIGDIR/plugins"
-mkdir -p "$USER_HOME/.fonts"
-
-cp -f ./.zshrc $USER_HOME/
-cp -f ./qzshrc.zsh $CONFIGDIR
-
+logProgress "Installing Oh-My-Zsh lib files"
+install_omz_lib "key-bindings.zsh"
+install_omz_lib "theme-and-appearance.zsh"
 
 logProgress "Installing Powerlevel10k theme"
-
 
 install_powerlevel10k
 
@@ -177,6 +189,9 @@ for PLUGIN_NAME in "${!PLUGINS_MAP[@]}"; do
         logInfo "$PLUGIN_NAME plugin installed"
     fi
 done
+
+logInfo "Adding git aliases"
+git config --global alias.amend '!git add -u && git commit --amend --no-edit && git push -f'
 
 echo -e "\\033[1;32mDONE\n\\033[m"
 logInfo "Installation complete, exit terminal and enter a new zsh session"

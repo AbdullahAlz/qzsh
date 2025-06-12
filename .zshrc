@@ -16,6 +16,11 @@ export FZF_DEFAULT_OPS="--extended"
 
 [ -f "/home/user/.ghcup/env" ] && . "/home/user/.ghcup/env"
 
+alias e="exit"
+alias ip="ip --color=auto"
+alias kp='ps -ef | fzf --multi | awk '\''{print $2}'\'' | xargs sudo kill -9'
+alias git-update-all='find . -type d -name .git -execdir git pull --rebase --autostash \;'
+
 alias c='clear'
 alias l="ls -lah"
 alias myip="wget -qO- https://ipv4.wtfismyip.com/text"

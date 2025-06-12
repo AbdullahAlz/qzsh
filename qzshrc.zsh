@@ -1,4 +1,5 @@
 export TERM="xterm-256color"
+export HISTFILE="$HOME/.zsh_history"
 export CONFIGDIR="$HOME/.config/qzsh"
 
 if [[ -f "$CONFIGDIR/themes/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
@@ -38,6 +39,8 @@ export PATH=$PATH:~/.config/qzsh/bin
 NPM_PACKAGES="${HOME}/.npm"
 PATH="$NPM_PACKAGES/bin:$PATH"
 
+# zsh plugins
+
 [[ -s "$CONFIGDIR/marker/marker.sh" ]] && source "$CONFIGDIR/marker/marker.sh"
 [[ -f "$CONFIGDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$CONFIGDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
 [[ -f "$CONFIGDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$CONFIGDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
@@ -47,7 +50,13 @@ PATH="$NPM_PACKAGES/bin:$PATH"
 [[ -f "$CONFIGDIR/plugins/forgit/forgit.plugin.zsh" ]] && source "$CONFIGDIR/plugins/forgit/forgit.plugin.zsh"
 [[ -f "$CONFIGDIR/plugins/z/z.plugin.zsh" ]] && source "$CONFIGDIR/plugins/z/z.plugin.zsh"
 
+# useful omz libs
+
+[[ -f "$CONFIGDIR/lib/key-bindings.zsh" ]] && source "$CONFIGDIR/lib/key-bindings.zsh"
+[[ -f "$CONFIGDIR/lib/theme-and-appearance.zsh" ]] && source "$CONFIGDIR/lib/theme-and-appearance.zsh"
+
 autoload -Uz compinit
+export ZSH_CACHE_DIR="$HOME/.cache/zsh"
 compinit -d "$HOME/.cache/zsh/.zcompdump"
 
 setopt AUTO_CD
@@ -62,6 +71,7 @@ setopt HIST_SAVE_NO_DUPS
 setopt HIST_REDUCE_BLANKS
 setopt INC_APPEND_HISTORY
 setopt EXTENDED_HISTORY
+
 
 SAVEHIST=50000
 HISTSIZE=50000
@@ -117,15 +127,6 @@ ddg() {
 wiki() {
     $BROWSER "https://en.wikipedia.org/wiki/Special:Search?search=${(j:+:)@}"
 }
-
-
-git config --global alias.amend '!git add -u && git commit --amend --no-edit && git push -f'
-alias e="exit"
-alias ip="ip --color=auto"
-alias kp='ps -ef | fzf --multi | awk '\''{print $2}'\'' | xargs sudo kill -9'
-alias git-update-all='find . -type d -name .git -execdir git pull --rebase --autostash \;'
-
-
 # Ensure key bindings are set up properly for history substring search
 if [[ -f "$CONFIGDIR/plugins/history-substring-search/zsh-history-substring-search.zsh" ]]; then
     bindkey '^[[A' history-substring-search-up
