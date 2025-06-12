@@ -158,7 +158,7 @@ for package in "${neededPackages[@]}"; do
     fi
 done
 
-if [ ${#missing_packages[@]} -ne 0 and -z "$SUDO_USER" ]; then 
+if [ ${#missing_packages[@]} -ne 0 ] && [ -z "$SUDO_USER" ]; then 
     logError "The following packages are missing: ${missing_packages[*]}"
     logWarning "Want to proceed with installation? sudo required (y/n)"
     read -r answer
@@ -166,9 +166,10 @@ if [ ${#missing_packages[@]} -ne 0 and -z "$SUDO_USER" ]; then
         logError "Installation aborted by user."
         exit 1
     fi
-
 fi
+
 perform_update
+
 for package in "${missing_packages[@]}"; do
     logProgress "Installing package: $package"
     installpkg "$package"

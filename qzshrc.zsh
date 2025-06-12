@@ -13,17 +13,17 @@ POWERLEVEL9K_OS_ICON_FOREGROUND="blue"
 POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="white"
 POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="white"
-typeset -g POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
-  status                  # exit status of last command
-  command_execution_time  # how long last command took
-  background_jobs         # number of background jobs
-  ram                     # RAM usage
-  load                    # system load
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
+  status                    # exit status of last command
+  command_execution_time    # how long last command took
+  background_jobs           # number of background jobs
+  ram                       # RAM usage
+  load                      # system load
 )
-typeset -g POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
-  context         # user@hostname
-  dir             # current directory
-  vcs             # git info (branch, status)
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
+  context                   # user@hostname
+  dir                       # current directory
+  vcs                       # git info (branch, status)
 )
 POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 
@@ -40,7 +40,6 @@ NPM_PACKAGES="${HOME}/.npm"
 PATH="$NPM_PACKAGES/bin:$PATH"
 
 # zsh plugins
-
 [[ -s "$CONFIGDIR/marker/marker.sh" ]] && source "$CONFIGDIR/marker/marker.sh"
 [[ -f "$CONFIGDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$CONFIGDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
 [[ -f "$CONFIGDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$CONFIGDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
@@ -49,11 +48,6 @@ PATH="$NPM_PACKAGES/bin:$PATH"
 [[ -f "$CONFIGDIR/plugins/fzf-tab/fzf-tab.plugin.zsh" ]] && source "$CONFIGDIR/plugins/fzf-tab/fzf-tab.plugin.zsh"
 [[ -f "$CONFIGDIR/plugins/forgit/forgit.plugin.zsh" ]] && source "$CONFIGDIR/plugins/forgit/forgit.plugin.zsh"
 [[ -f "$CONFIGDIR/plugins/z/z.plugin.zsh" ]] && source "$CONFIGDIR/plugins/z/z.plugin.zsh"
-
-# useful omz libs
-
-[[ -f "$CONFIGDIR/lib/key-bindings.zsh" ]] && source "$CONFIGDIR/lib/key-bindings.zsh"
-[[ -f "$CONFIGDIR/lib/theme-and-appearance.zsh" ]] && source "$CONFIGDIR/lib/theme-and-appearance.zsh"
 
 autoload -Uz compinit
 export ZSH_CACHE_DIR="$HOME/.cache/zsh"
@@ -127,10 +121,13 @@ ddg() {
 wiki() {
     $BROWSER "https://en.wikipedia.org/wiki/Special:Search?search=${(j:+:)@}"
 }
-# Ensure key bindings are set up properly for history substring search
-if [[ -f "$CONFIGDIR/plugins/history-substring-search/zsh-history-substring-search.zsh" ]]; then
-    bindkey '^[[A' history-substring-search-up
-    bindkey '^[[B' history-substring-search-down
-    bindkey -M vicmd 'k' history-substring-search-up
-    bindkey -M vicmd 'j' history-substring-search-down
-fi
+
+alias e="exit"
+alias ip="ip --color=auto"
+alias kp='ps -ef | fzf --multi | awk '\''{print $2}'\'' | xargs sudo kill -9'
+alias git-update-all='find . -type d -name .git -execdir git pull --rebase --autostash \;'
+
+alias c='clear'
+alias l="ls -lah"
+alias myip="wget -qO- https://ipv4.wtfismyip.com/text"
+alias myip6="wget -qO- https://ipv6.wtfismyip.com/text"
