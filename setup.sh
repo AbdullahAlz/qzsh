@@ -142,21 +142,35 @@ mkdir -p "$USER_HOME/.cache/zsh" #later used by compinit
 cp -f ./.zshrc $USER_HOME/
 cp -f ./qzshrc.zsh $CONFIGDIR
 
-neededPackages=(
-    "zsh"
-    "git"
-    "curl"
-    "wget"
-    "python3-pip"
-    "fontconfig"
-    "autoconf" # needed later by build-fzf-tab-module
-)
 missing_packages=()
-for package in "${neededPackages[@]}"; do
-    if ! command -v "$package" &>/dev/null; then
-        missing_packages+=("$package")
-    fi
-done
+
+
+# manually checking every command
+# some packages have different names than their commands, I am not writing a pkg check for all distros
+if ! command -v git &>/dev/null; then
+    missing_packages+=("git")
+fi
+if ! command -v curl &>/dev/null; then
+    missing_packages+=("curl")
+fi
+if ! command -v wget &>/dev/null; then
+    missing_packages+=("wget")
+fi
+if ! command -v pip &>/dev/null; then
+    missing_packages+=("python3-pip")
+fi
+if ! command -v fc &>/dev/null; then
+    missing_packages+=("fontconfig")
+fi
+if ! command -v zsh &>/dev/null; then
+    missing_packages+=("zsh")
+fi
+if ! command -v autoconf &>/dev/null; then
+    missing_packages+=("autoconf")
+fi
+if ! command -v ncurses5-config &>/dev/null && ! command -v ncurses6-config &>/dev/null; then
+    missing_packages+=("ncurses-dev")
+fi
 
 if [ ${#missing_packages[@]} -ne 0 ] && [ -z "$SUDO_USER" ]; then 
     logError "The following packages are missing: ${missing_packages[*]}"
