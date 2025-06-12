@@ -133,3 +133,5 @@ alias c='clear'
 alias l="ls -lah"
 alias myip="wget -qO- https://ipv4.wtfismyip.com/text"
 alias myip6="wget -qO- https://ipv6.wtfismyip.com/text"
+
+bindkey "^[[3;3~" kill-region
