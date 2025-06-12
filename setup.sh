@@ -42,13 +42,13 @@ perform_update() {
 }
 
 install_fzf() {
-    if [ -d "$FZF_INSTALLATION_PATH" ]; then
-        git -C "$FZF_INSTALLATION_PATH" pull
+    if [ -d $FZF_INSTALLATION_PATH ]; then
+        git -C $FZF_INSTALLATION_PATH pull
+        $FZF_INSTALLATION_PATH/install --all --key-bindings --completion --no-update-rc
     else
-        git clone --depth=1 $FZF_REPO "$FZF_INSTALLATION_PATH"
+        git --depth 1 $FZF_REPO $FZF_INSTALLATION_PATH
+        "$FZF_INSTALLATION_PATH"/install --all --key-bindings --completion --no-update-rc
     fi
-
-    "$FZF_INSTALLATION_PATH"/install --bin --key-bindings --completion --no-update-rc
 }
 
 install_powerlevel10k() {
@@ -127,7 +127,7 @@ export PLUGINS_MAP=(
 ###################### Script ######################
 
 # backup existing .zshrc
-if mv -n $HOME/.zshrc $HOME/.zshrc-backup-"$(date +"%Y-%m-%d")"; then
+if mv -n $USER_HOME/.zshrc $USER_HOME/.zshrc-backup-"$(date +"%Y-%m-%d")"; then
     logInfo "Backed up the current .zshrc to .zshrc-backup-date\n"
 fi
 
