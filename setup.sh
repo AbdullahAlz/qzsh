@@ -180,15 +180,15 @@ if [ ${#missing_packages[@]} -ne 0 ] && [ -z "$SUDO_USER" ]; then
         logError "Installation aborted by user."
         exit 1
     fi
+
+
+    perform_update
+
+    for package in "${missing_packages[@]}"; do
+        logProgress "Installing package: $package"
+        installpkg "$package"
+    done
 fi
-
-perform_update
-
-for package in "${missing_packages[@]}"; do
-    logProgress "Installing package: $package"
-    installpkg "$package"
-done
-
 
 
 logProgress "Installing Oh-My-Zsh lib files"
