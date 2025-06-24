@@ -1,3 +1,4 @@
+OLDTERM=$TERM
 export TERM="xterm-256color"
 export HISTFILE="$HOME/.zsh_history"
 export CONFIGDIR="$HOME/.config/qzsh"
@@ -44,7 +45,7 @@ POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="white"
 POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
 POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="white"
 POWERLEVEL9K_RAM_BACKGROUND="lime"
-if [[ "$(tty)" == "/dev/tty"* || "$TERM" == "linux" || "$TERM" == "dumb" || "$TERMINAL_EMULATOR" == "JetBrains-JediTerm" ]]; then
+if [[ "$(tty)" == "/dev/tty"* || "$OLDTERM" == "linux" || "$OLDTERM" == "xterm" || "$OLDTERM" == "dumb" || "$TERMINAL_EMULATOR" == "JetBrains-JediTerm" ]]; then
     set_classic_mode
 fi
 
@@ -154,5 +155,12 @@ alias c='clear'
 alias l="ls -lah"
 alias myip="wget -qO- https://ipv4.wtfismyip.com/text"
 alias myip6="wget -qO- https://ipv6.wtfismyip.com/text"
+
+alias ...="../.."
+alias ....="../../.."
+alias .....="../../../.."
+alias ......="../../../../.."
+alias 1="cd -"
+alias _="sudo"
 
 bindkey "^[[3;3~" kill-region
