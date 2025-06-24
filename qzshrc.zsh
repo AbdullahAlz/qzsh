@@ -7,26 +7,51 @@ if [[ -f "$CONFIGDIR/themes/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
 fi
 
 export ZSH_THEME="powerlevel10k/powerlevel10k"
-POWERLEVEL9K_MODE='nerdfont-complete'
-POWERLEVEL9K_OS_ICON_BACKGROUND="white"
-POWERLEVEL9K_OS_ICON_FOREGROUND="blue"
-POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
-POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="white"
-POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="white"
+POWERLEVEL9K_MODE='classic'
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
   status                    # exit status of last command
   command_execution_time    # how long last command took
   background_jobs           # number of background jobs
   ram                       # RAM usage
-  load                      # system load
 )
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
   context                   # user@hostname
   dir                       # current directory
   vcs                       # git info (branch, status)
 )
-POWERLEVEL9K_PROMPT_ON_NEWLINE=true
 
+
+if [[ "$(tty)" == "/dev/tty"* || "$TERM" == "linux" || "$TERM" == "dumb" || "$TERMINAL_EMULATOR" == "JetBrains-JediTerm" ]]; then
+    set_classic_mode
+else
+    POWERLEVEL9K_MODE='nerdfont-complete'
+fi
+POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="white"
+POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
+POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="white"
+POWERLEVEL9K_RAM_BACKGROUND="lime"
+
+set_classic_mode() {
+POWERLEVEL9K_MODE='classic'
+POWERLEVEL9K_RAM_ICON=""
+POWERLEVEL9K_EXECUTION_TIME_ICON=""
+POWERLEVEL9K_FOLDER_ICON=""
+POWERLEVEL9K_LOAD_ICON=""
+POWERLEVEL9K_LEFT_SEGMENT_END_SEPARATOR=""
+POWERLEVEL9K_LEFT_SEGMENT_SEPARATOR=""
+POWERLEVEL9K_LEFT_SUBSEGMENT_SEPARATOR=""
+POWERLEVEL9K_RIGHT_SEGMENT_SEPARATOR=""
+POWERLEVEL9K_RIGHT_SUBSEGMENT_SEPARATOR=""
+POWERLEVEL9K_VCS_UNSTAGED_ICON="!"
+POWERLEVEL9K_VCS_UNTRACKED_ICON="?"
+POWERLEVEL9K_VCS_STASH_ICON="S"
+POWERLEVEL9K_VCS_STAGED_ICON="+"
+POWERLEVEL9K_VCS_INCOMING_CHANGES_ICON="↓"
+POWERLEVEL9K_VCS_OUTGOING_CHANGES_ICON="↑"
+POWERLEVEL9K_VCS_REMOTE_BRANCH_ICON="→"
+POWERLEVEL9K_VCS_BRANCH_ICON=""
+}
 
 if [[ -f $CONFIGDIR/plugins/zsh_codex/zsh_codex.plugin.zsh ]]; then
     source $CONFIGDIR/plugins/zsh_codex/zsh_codex.plugin.zsh
