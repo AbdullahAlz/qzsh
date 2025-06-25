@@ -64,14 +64,12 @@ PATH="$NPM_PACKAGES/bin:$PATH"
 [[ -f "$CONFIGDIR/lib/key-bindings.zsh" ]] && source "$CONFIGDIR/lib/key-bindings.zsh"
 [[ -f "$CONFIGDIR/lib/theme-and-appearance.zsh" ]] && source "$CONFIGDIR/lib/theme-and-appearance.zsh"
 # zsh plugins
-[[ -s "$CONFIGDIR/marker/marker.sh" ]] && source "$CONFIGDIR/marker/marker.sh"
 [[ -f "$CONFIGDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$CONFIGDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
 [[ -f "$CONFIGDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$CONFIGDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 [[ -f "$CONFIGDIR/plugins/zsh-completions/zsh-completions.plugin.zsh" ]] && source "$CONFIGDIR/plugins/zsh-completions/zsh-completions.plugin.zsh"
 [[ -f "$CONFIGDIR/plugins/history-substring-search/zsh-history-substring-search.zsh" ]] && source "$CONFIGDIR/plugins/history-substring-search/zsh-history-substring-search.zsh"
 [[ -f "$CONFIGDIR/plugins/fzf-tab/fzf-tab.plugin.zsh" ]] && source "$CONFIGDIR/plugins/fzf-tab/fzf-tab.plugin.zsh"
 [[ -f "$CONFIGDIR/plugins/forgit/forgit.plugin.zsh" ]] && source "$CONFIGDIR/plugins/forgit/forgit.plugin.zsh"
-[[ -f "$CONFIGDIR/plugins/z/z.plugin.zsh" ]] && source "$CONFIGDIR/plugins/z/z.plugin.zsh"
 
 autoload -Uz compinit
 export ZSH_CACHE_DIR="$HOME/.cache/zsh"

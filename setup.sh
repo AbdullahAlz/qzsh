@@ -120,7 +120,6 @@ export PLUGINS_MAP=(
     ["zsh-autosuggestions"]="https://github.com/zsh-users/zsh-autosuggestions.git"
     ["zsh-completions"]="https://github.com/zsh-users/zsh-completions.git"
     ["history-substring-search"]="https://github.com/zsh-users/zsh-history-substring-search.git"
-    ["z"]="https://github.com/agkozak/zsh-z.git"
     ["forgit"]="https://github.com/wfxr/forgit.git"
 )
 
