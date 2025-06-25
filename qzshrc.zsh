@@ -160,5 +160,6 @@ alias .....="../../../.."
 alias ......="../../../../.."
 alias 1="cd -"
 alias _="sudo"
+alias grep="grep --color=auto"
 
 bindkey "^[[3;3~" kill-region
