@@ -79,9 +79,13 @@ autoload -Uz compinit
 export ZSH_CACHE_DIR="$HOME/.cache/zsh"
 compinit -d "$HOME/.cache/zsh/.zcompdump"
 
+#If history substring does not work, find out what arrows are (usually ^[[A) and hardcode them below
 if [[ -n "${terminfo[kcuu1]}" && -n "${terminfo[kcud1]}" && -o zle ]]; then
     bindkey "${terminfo[kcuu1]}" history-substring-search-up
     bindkey "${terminfo[kcud1]}" history-substring-search-down
+else
+    bindkey "^[[A" history-substring-search-up
+    bindkey "^[[B" history-substring-search-down
 fi
 
 setopt AUTO_CD
