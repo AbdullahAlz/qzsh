@@ -146,15 +146,15 @@ zle -N sudo-command-line
 bindkey "\e\e" sudo-command-line
 
 google() {
-    $BROWSER "https://www.google.com/search?&udm=14&gl=us&hl=en&pws=0&q=${(j:+:)@}&igu=1" # hopefully works, this does not let google track you
+    open "https://www.google.com/search?&udm=14&gl=us&hl=en&pws=0&q=${(j:+:)@}&igu=1" # hopefully works, this does not let google track you
 }
 
 ddg() {
-    $BROWSER "https://duckduckgo.com/?q=${(j:+:)@}"
+    open "https://duckduckgo.com/?q=${(j:+:)@}"
 }
 
 wiki() {
-    $BROWSER "https://en.wikipedia.org/wiki/Special:Search?search=${(j:+:)@}"
+    open "https://en.wikipedia.org/wiki/Special:Search?search=${(j:+:)@}"
 }
 
 alias e="exit"
