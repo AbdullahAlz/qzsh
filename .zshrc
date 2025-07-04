@@ -16,3 +16,7 @@ fi
 export FZF_DEFAULT_OPS="--extended"
 
 [ -f "/home/user/.ghcup/env" ] && . "/home/user/.ghcup/env"
+
+# if last history entry was a command with exit code != 1
+# this ensures new zsh starts with code 0
+true
