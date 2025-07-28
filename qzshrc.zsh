@@ -2,68 +2,49 @@ OLDTERM=$TERM
 export TERM="xterm-256color"
 export HISTFILE="$HOME/.zsh_history"
 export CONFIGDIR="$HOME/.config/qzsh"
+export ZSH_THEME="powerlevel10k/powerlevel10k"
+export PATH=$PATH:~/.local/bin:~/.config/qzsh/bin
+export ZSH_CACHE_DIR="$HOME/.cache/zsh"
 
+NPM_PACKAGES="${HOME}/.npm"
+PATH="$NPM_PACKAGES/bin:$PATH"
+
+SAVEHIST=50000
+HISTSIZE=50000
+
+# Powerlevel10k Settings
 if [[ -f "$CONFIGDIR/themes/powerlevel10k/powerlevel10k.zsh-theme" ]]; then
     source "$CONFIGDIR/themes/powerlevel10k/powerlevel10k.zsh-theme"
 fi
 
-export ZSH_THEME="powerlevel10k/powerlevel10k"
-set_classic_mode() {
-    POWERLEVEL9K_MODE='classic'
-    POWERLEVEL9K_RAM_ICON=""
-    POWERLEVEL9K_EXECUTION_TIME_ICON=""
-    POWERLEVEL9K_FOLDER_ICON=""
-    POWERLEVEL9K_LOAD_ICON=""
-    POWERLEVEL9K_LEFT_SEGMENT_END_SEPARATOR=""
-    POWERLEVEL9K_LEFT_SEGMENT_SEPARATOR=""
-    POWERLEVEL9K_LEFT_SUBSEGMENT_SEPARATOR=""
-    POWERLEVEL9K_RIGHT_SEGMENT_SEPARATOR=""
-    POWERLEVEL9K_RIGHT_SUBSEGMENT_SEPARATOR=""
-    POWERLEVEL9K_VCS_UNSTAGED_ICON="!"
-    POWERLEVEL9K_VCS_UNTRACKED_ICON="?"
-    POWERLEVEL9K_VCS_STASH_ICON="S"
-    POWERLEVEL9K_VCS_STAGED_ICON="+"
-    POWERLEVEL9K_VCS_INCOMING_CHANGES_ICON="↓"
-    POWERLEVEL9K_VCS_OUTGOING_CHANGES_ICON="↑"
-    POWERLEVEL9K_VCS_REMOTE_BRANCH_ICON="→"
-    POWERLEVEL9K_VCS_BRANCH_ICON=""
-}
 POWERLEVEL9K_MODE='nerdfont-complete'
+POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="white"
+POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
+POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="white"
+POWERLEVEL9K_RAM_BACKGROUND="green"
+POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX=""
+POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX=""
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
   status                    # exit status of last command
   command_execution_time    # how long last command took
   background_jobs           # number of background jobs
-  ram                       # RAM usage
+  load                      # system load
 )
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
   context                   # user@hostname
   dir                       # current directory
   vcs                       # git info (branch, status)
 )
-POWERLEVEL9K_PROMPT_ON_NEWLINE=true
-POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="white"
-POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
-POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="white"
-POWERLEVEL9K_RAM_BACKGROUND="lime"
 
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=magenta,fg=white,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
 HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
-if [[ "$(tty)" == "/dev/tty"* || "$OLDTERM" == "linux" || "$OLDTERM" == "xterm" || "$OLDTERM" == "dumb" || "$TERMINAL_EMULATOR" == "JetBrains-JediTerm" ]]; then
-    set_classic_mode
-fi
-
 
 if [[ -f $CONFIGDIR/plugins/zsh_codex/zsh_codex.plugin.zsh ]]; then
     source $CONFIGDIR/plugins/zsh_codex/zsh_codex.plugin.zsh
     [[ -o zle ]] && bindkey '^X' create_completion
 fi
-
-export PATH=$PATH:~/.local/bin
-export PATH=$PATH:~/.config/qzsh/bin
-
-NPM_PACKAGES="${HOME}/.npm"
-PATH="$NPM_PACKAGES/bin:$PATH"
 
 [[ -f "$CONFIGDIR/lib/key-bindings.zsh" ]] && source "$CONFIGDIR/lib/key-bindings.zsh"
 [[ -f "$CONFIGDIR/lib/theme-and-appearance.zsh" ]] && source "$CONFIGDIR/lib/theme-and-appearance.zsh"
@@ -76,17 +57,7 @@ PATH="$NPM_PACKAGES/bin:$PATH"
 [[ -f "$CONFIGDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$CONFIGDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 autoload -Uz compinit
-export ZSH_CACHE_DIR="$HOME/.cache/zsh"
 compinit -d "$HOME/.cache/zsh/.zcompdump"
-
-#If history substring does not work, find out what arrows are (usually ^[[A) and hardcode them below
-if [[ -n "${terminfo[kcuu1]}" && -n "${terminfo[kcud1]}" && -o zle ]]; then
-    bindkey "${terminfo[kcuu1]}" history-substring-search-up
-    bindkey "${terminfo[kcud1]}" history-substring-search-down
-else
-    bindkey "^[[A" history-substring-search-up
-    bindkey "^[[B" history-substring-search-down
-fi
 
 setopt AUTO_CD
 setopt HIST_VERIFY
@@ -100,10 +71,6 @@ setopt HIST_SAVE_NO_DUPS
 setopt HIST_REDUCE_BLANKS
 setopt INC_APPEND_HISTORY
 setopt EXTENDED_HISTORY
-
-
-SAVEHIST=50000
-HISTSIZE=50000
 
 speedtest() {
     curl -s https://raw.githubusercontent.com/sivel/speedtest-cli/master/speedtest.py | python3 -
@@ -142,8 +109,6 @@ sudo-command-line() {
         LBUFFER="sudo $LBUFFER"
     fi
 }
-zle -N sudo-command-line
-bindkey "\e\e" sudo-command-line
 
 google() {
     open "https://www.google.com/search?&udm=14&gl=us&hl=en&pws=0&q=${(j:+:)@}&igu=1" # hopefully works, this does not let google track you
@@ -156,6 +121,7 @@ ddg() {
 wiki() {
     open "https://en.wikipedia.org/wiki/Special:Search?search=${(j:+:)@}"
 }
+
 showallcolors() {
     for i in {0..255}; do
     printf "\e[48;5;${i}m %3d \e[0m" $i
@@ -164,6 +130,44 @@ showallcolors() {
     fi
 done
 }
+
+set_classic_mode() {
+    POWERLEVEL9K_MODE='classic'
+    POWERLEVEL9K_RAM_ICON=""
+    POWERLEVEL9K_EXECUTION_TIME_ICON=""
+    POWERLEVEL9K_FOLDER_ICON=""
+    POWERLEVEL9K_LOAD_ICON=""
+    POWERLEVEL9K_LEFT_SEGMENT_END_SEPARATOR=""
+    POWERLEVEL9K_LEFT_SEGMENT_SEPARATOR=""
+    POWERLEVEL9K_LEFT_SUBSEGMENT_SEPARATOR=""
+    POWERLEVEL9K_RIGHT_SEGMENT_SEPARATOR=""
+    POWERLEVEL9K_RIGHT_SUBSEGMENT_SEPARATOR=""
+    POWERLEVEL9K_VCS_UNSTAGED_ICON="!"
+    POWERLEVEL9K_VCS_UNTRACKED_ICON="?"
+    POWERLEVEL9K_VCS_STASH_ICON="S"
+    POWERLEVEL9K_VCS_STAGED_ICON="+"
+    POWERLEVEL9K_VCS_INCOMING_CHANGES_ICON="↓"
+    POWERLEVEL9K_VCS_OUTGOING_CHANGES_ICON="↑"
+    POWERLEVEL9K_VCS_REMOTE_BRANCH_ICON="→"
+    POWERLEVEL9K_VCS_BRANCH_ICON=""
+}
+
+#If history substring does not work, find out what arrows are (usually ^[[A) and hardcode them below
+if [[ -n "${terminfo[kcuu1]}" && -n "${terminfo[kcud1]}" && -o zle ]]; then
+    bindkey "${terminfo[kcuu1]}" history-substring-search-up
+    bindkey "${terminfo[kcud1]}" history-substring-search-down
+else
+    bindkey "^[[A" history-substring-search-up
+    bindkey "^[[B" history-substring-search-down
+fi
+
+if [[ "$(tty)" == "/dev/tty"* || "$OLDTERM" == "linux" || "$OLDTERM" == "xterm" || "$OLDTERM" == "dumb" || "$TERMINAL_EMULATOR" == "JetBrains-JediTerm" ]]; then
+    set_classic_mode
+fi
+
+zle -N sudo-command-line
+bindkey "\e\e" sudo-command-line
+bindkey "^[[3;3~" kill-region
 
 alias e="exit"
 alias ip="ip --color=auto"
@@ -174,6 +178,7 @@ alias c='clear'
 alias l="ls -lah"
 alias myip="wget -qO- https://ipv4.wtfismyip.com/text"
 alias myip6="wget -qO- https://ipv6.wtfismyip.com/text"
+alias myipl="hostname -I | awk '{print \$1}'"
 
 alias ...="../.."
 alias ....="../../.."
@@ -182,6 +187,3 @@ alias ......="../../../../.."
 alias 1="cd -"
 alias _="sudo"
 alias grep="grep --color=auto"
-alias myipl="hostname -I | awk '{print \$1}'"
-
-bindkey "^[[3;3~" kill-region
