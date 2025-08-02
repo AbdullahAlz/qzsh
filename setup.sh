@@ -46,7 +46,7 @@ install_fzf() {
         git -C $FZF_INSTALLATION_PATH pull
         $FZF_INSTALLATION_PATH/install --all --key-bindings --completion --no-update-rc
     else
-        git --depth 1 $FZF_REPO $FZF_INSTALLATION_PATH
+        git clone --depth 1 $FZF_REPO $FZF_INSTALLATION_PATH
         "$FZF_INSTALLATION_PATH"/install --all --key-bindings --completion --no-update-rc
     fi
 }
@@ -84,7 +84,7 @@ install_custom_fonts() {
     fi
 }
 
-install_omz_lib() {
+install_omz_lib() { 
     local lib_url="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/lib/$1"
     if wget -q --show-progress -O "$CONFIGDIR/lib/$1" "$lib_url"; then
         logInfo "Downloaded Oh-My-Zsh lib: $1"
