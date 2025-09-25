@@ -1,6 +1,6 @@
 OLDTERM=$TERM
+HISTFILE="$HOME/.zsh_history"
 export TERM="xterm-256color"
-export HISTFILE="$HOME/.zsh_history"
 export CONFIGDIR="$HOME/.config/qzsh"
 export ZSH_THEME="powerlevel10k/powerlevel10k"
 export PATH=$PATH:~/.local/bin:~/.config/qzsh/bin
@@ -29,6 +29,7 @@ POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(
   status                    # exit status of last command
   command_execution_time    # how long last command took
   background_jobs           # number of background jobs
+  ram                       # Remaining RAM
   load                      # system load
 )
 POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(
@@ -59,17 +60,17 @@ fi
 autoload -Uz compinit
 compinit -d "$HOME/.cache/zsh/.zcompdump"
 
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+
 setopt AUTO_CD
 setopt HIST_VERIFY
 setopt SHARE_HISTORY
 setopt HIST_EXPIRE_DUPS_FIRST
-setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_ALL_DUPS
 setopt HIST_FIND_NO_DUPS
 setopt HIST_IGNORE_SPACE
 setopt HIST_SAVE_NO_DUPS
 setopt HIST_REDUCE_BLANKS
-setopt INC_APPEND_HISTORY
 setopt EXTENDED_HISTORY
 
 speedtest() {
@@ -180,10 +181,6 @@ alias myip="wget -qO- https://ipv4.wtfismyip.com/text"
 alias myip6="wget -qO- https://ipv6.wtfismyip.com/text"
 alias myipl="hostname -I | awk '{print \$1}'"
 
-alias ...="../.."
-alias ....="../../.."
-alias .....="../../../.."
-alias ......="../../../../.."
 alias 1="cd -"
 alias _="sudo"
 alias grep="grep --color=auto"
