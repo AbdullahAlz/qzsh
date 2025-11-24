@@ -84,7 +84,7 @@ install_custom_fonts() {
     fi
 }
 
-install_omz_lib() { 
+install_omz_lib() {
     local lib_url="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/lib/$1"
     if wget -q --show-progress -O "$CONFIGDIR/lib/$1" "$lib_url"; then
         logInfo "Downloaded Oh-My-Zsh lib: $1"
@@ -155,9 +155,6 @@ fi
 if ! command -v wget &>/dev/null; then
     missing_packages+=("wget")
 fi
-if ! command -v pip &>/dev/null; then
-    missing_packages+=("python3-pip")
-fi
 if ! command -v fc &>/dev/null; then
     missing_packages+=("fontconfig")
 fi
@@ -171,7 +168,7 @@ if ! command -v ncurses5-config &>/dev/null && ! command -v ncurses6-config &>/d
     missing_packages+=("ncurses-dev")
 fi
 
-if [ ${#missing_packages[@]} -ne 0 ] && [ -z "$SUDO_USER" ]; then 
+if [ ${#missing_packages[@]} -ne 0 ] && [ -z "$SUDO_USER" ]; then
     logError "The following packages are missing: ${missing_packages[*]}"
     logWarning "Want to proceed with installation? sudo required (y/n)"
     read -r answer
