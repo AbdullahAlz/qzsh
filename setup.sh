@@ -99,14 +99,23 @@ FZF_INSTALLATION_PATH="$CONFIGDIR/fzf"
 LAZYDOCKER_INSTALLATION_PATH="$CONFIGDIR/lazydocker"
 PLUGINS_DIR="$CONFIGDIR/plugins"
 
-declare -A PLUGINS_MAP
-export PLUGINS_MAP=(
-    ["fzf-tab"]="https://github.com/Aloxaf/fzf-tab.git"
-    ["zsh-syntax-highlighting"]="https://github.com/zsh-users/zsh-syntax-highlighting.git"
-    ["zsh-autosuggestions"]="https://github.com/zsh-users/zsh-autosuggestions.git"
-    ["zsh-completions"]="https://github.com/zsh-users/zsh-completions.git"
-    ["history-substring-search"]="https://github.com/zsh-users/zsh-history-substring-search.git"
-    ["forgit"]="https://github.com/wfxr/forgit.git"
+# plain parallel arrays instead of an associative array, since macOS ships
+# bash 3.2 (no declare -A support)
+PLUGIN_NAMES=(
+    "fzf-tab"
+    "zsh-syntax-highlighting"
+    "zsh-autosuggestions"
+    "zsh-completions"
+    "history-substring-search"
+    "forgit"
+)
+PLUGIN_REPOS=(
+    "https://github.com/Aloxaf/fzf-tab.git"
+    "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+    "https://github.com/zsh-users/zsh-autosuggestions.git"
+    "https://github.com/zsh-users/zsh-completions.git"
+    "https://github.com/zsh-users/zsh-history-substring-search.git"
+    "https://github.com/wfxr/forgit.git"
 )
 
 ###################### Script ######################
@@ -146,11 +155,13 @@ fi
 if ! command -v zsh &>/dev/null; then
     missing_packages+=("zsh")
 fi
-if ! command -v autoconf &>/dev/null; then
-    missing_packages+=("autoconf")
-fi
-if ! command -v ncurses5-config &>/dev/null && ! command -v ncurses6-config &>/dev/null; then
-    missing_packages+=("ncurses-dev")
+if [[ "$(uname -s)" != "Darwin" ]]; then
+    if ! command -v autoconf &>/dev/null; then
+        missing_packages+=("autoconf")
+    fi
+    if ! command -v ncurses5-config &>/dev/null && ! command -v ncurses6-config &>/dev/null; then
+        missing_packages+=("ncurses-dev")
+    fi
 fi
 
 if [ ${#missing_packages[@]} -ne 0 ]; then
@@ -183,13 +194,14 @@ install_lazydocker
 
 logProgress "Installing zsh plugins"
 
-for PLUGIN_NAME in "${!PLUGINS_MAP[@]}"; do
+for i in "${!PLUGIN_NAMES[@]}"; do
+    PLUGIN_NAME="${PLUGIN_NAMES[$i]}"
     PLUGIN_PATH="$PLUGINS_DIR/$PLUGIN_NAME"
     if [ -d "$PLUGIN_PATH" ]; then
         logInfo "$PLUGIN_NAME plugin already exists, updating..."
         git -C "$PLUGIN_PATH" pull
     else
-        PLUGIN_REPO_LINK="${PLUGINS_MAP[$PLUGIN_NAME]}"
+        PLUGIN_REPO_LINK="${PLUGIN_REPOS[$i]}"
         git clone --depth=1 "$PLUGIN_REPO_LINK" "$PLUGIN_PATH"
         logInfo "$PLUGIN_NAME plugin installed"
     fi
