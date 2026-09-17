@@ -4,10 +4,6 @@ trap "exit" SIGINT
 
 ###################### Functions ######################
 
-echoIULRed() {
-    echo -e "\\033[3;4;31m$*\\033[m"
-}
-
 logWarning() {
     echo -e "\\033[33m$*\\033[m"
 }
@@ -22,23 +18,6 @@ logError() {
 
 logProgress() {
     echo -e "\\033[36m$*\\033[m"
-}
-
-installpkg(){
-        if sudo apt install -y "$1" || sudo pacman -S "$1" || sudo dnf install -y "$1" || sudo yum install -y "$1" || sudo brew install "$1" || pkg install "$1"; then
-            installedPackages+=("$1")
-            logInfo "Installed '$1'"
-        else
-            logError "Failed to install package '$1'."
-        fi
-}
-
-perform_update() {
-    if sudo apt update || sudo pacman -Sy || sudo dnf check-update || sudo yum check-update || brew update || pkg update; then
-        logProgress "System update successful.\n"
-    else
-        logError "System update failed\n"
-    fi
 }
 
 install_fzf() {
@@ -60,6 +39,11 @@ install_powerlevel10k() {
 }
 
 install_lazydocker() {
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        brew install lazydocker
+        return
+    fi
+
     if [ -d "$LAZYDOCKER_INSTALLATION_PATH" ]; then
         git -C $LAZYDOCKER_INSTALLATION_PATH pull
     else
@@ -67,20 +51,26 @@ install_lazydocker() {
     fi
     "$LAZYDOCKER_INSTALLATION_PATH"/scripts/install_update_linux.sh
     sleep 3
-
 }
 
 install_custom_fonts() {
-    if [ ! -f $USER_HOME/.fonts/HackNerdFont-Regular.ttf ]; then
-        wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/HackNerdFont-Regular.ttf -P $HOME/.fonts/
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+        FONTS_DIR="$USER_HOME/Library/Fonts"
+    else
+        FONTS_DIR="$USER_HOME/.fonts"
+    fi
+    mkdir -p "$FONTS_DIR"
+
+    if [ ! -f "$FONTS_DIR/HackNerdFont-Regular.ttf" ]; then
+        wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/Hack/Regular/HackNerdFont-Regular.ttf -P "$FONTS_DIR"
     fi
 
-    if [ ! -f $USER_HOME/.fonts/RobotoMonoNerdFont-Regular.ttf ]; then
-        wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/RobotoMonoNerdFont-Regular.ttf -P $HOME/.fonts/
+    if [ ! -f "$FONTS_DIR/RobotoMonoNerdFont-Regular.ttf" ]; then
+        wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/RobotoMono/Regular/RobotoMonoNerdFont-Regular.ttf -P "$FONTS_DIR"
     fi
 
-    if [ ! -f $USER_HOME/.fonts/DejaVuSansMNerdFont-Regular.ttf ]; then
-        wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/DejaVuSansMNerdFont-Regular.ttf -P $HOME/.fonts/
+    if [ ! -f "$FONTS_DIR/DejaVuSansMNerdFont-Regular.ttf" ]; then
+        wget -q --show-progress -N https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/DejaVuSansMono/Regular/DejaVuSansMNerdFont-Regular.ttf -P "$FONTS_DIR"
     fi
 }
 
@@ -95,11 +85,7 @@ install_omz_lib() {
 
 ###################### Global Variables ######################
 
-if [ -n "$SUDO_USER" ]; then
-    USER_HOME=$(eval echo "~$SUDO_USER")
-else
-    USER_HOME="$HOME"
-fi
+USER_HOME="$HOME"
 logWarning "Place your personal zshrc config files under '$USER_HOME/.config/czsh/zshrc/'\n"
 
 POWERLEVEL10K_REPO="https://github.com/romkatv/powerlevel10k.git"
@@ -135,7 +121,6 @@ mkdir -p "$CONFIGDIR/zshrc" # for future personal zshrc files
 mkdir -p "$CONFIGDIR/themes"
 mkdir -p "$CONFIGDIR/plugins"
 mkdir -p "$CONFIGDIR/lib"
-mkdir -p "$USER_HOME/.fonts"
 mkdir -p "$USER_HOME/.cache/zsh" #later used by compinit
 
 cp -f ./.zshrc $USER_HOME/
@@ -155,7 +140,7 @@ fi
 if ! command -v wget &>/dev/null; then
     missing_packages+=("wget")
 fi
-if ! command -v fc &>/dev/null; then
+if [[ "$(uname -s)" != "Darwin" ]] && ! command -v fc-cache &>/dev/null; then
     missing_packages+=("fontconfig")
 fi
 if ! command -v zsh &>/dev/null; then
@@ -168,22 +153,10 @@ if ! command -v ncurses5-config &>/dev/null && ! command -v ncurses6-config &>/d
     missing_packages+=("ncurses-dev")
 fi
 
-if [ ${#missing_packages[@]} -ne 0 ] && [ -z "$SUDO_USER" ]; then
-    logError "The following packages are missing: ${missing_packages[*]}"
-    logWarning "Want to proceed with installation? sudo required (y/n)"
-    read -r answer
-    if [[ "$answer" != "y" && "$answer" != "Y" ]]; then
-        logError "Installation aborted by user."
-        exit 1
-    fi
-
-
-    perform_update
-
-    for package in "${missing_packages[@]}"; do
-        logProgress "Installing package: $package"
-        installpkg "$package"
-    done
+if [ ${#missing_packages[@]} -ne 0 ]; then
+    logError "Missing required packages: ${missing_packages[*]}"
+    logWarning "Install them with your system's package manager (apt, brew, pacman, ...) and re-run this script."
+    exit 1
 fi
 
 
@@ -198,7 +171,7 @@ install_powerlevel10k
 logProgress "Installing Nerd Fonts"
 
 install_custom_fonts
-fc-cache -fv $USER_HOME/.fonts
+[[ "$(uname -s)" != "Darwin" ]] && fc-cache -fv "$USER_HOME/.fonts"
 
 logProgress "Installing fuzzy finder"
 

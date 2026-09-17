@@ -13,9 +13,9 @@ if [ "$(ls -A $ZSH_CONFIGS_DIR)" ]; then
     done
 fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-export FZF_DEFAULT_OPS="--extended"
+export FZF_DEFAULT_OPTS="--extended"
 
-[ -f "/home/user/.ghcup/env" ] && . "/home/user/.ghcup/env"
+[ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env"
 
 # if last history entry was a command with exit code != 1
 # this ensures new zsh starts with code 0

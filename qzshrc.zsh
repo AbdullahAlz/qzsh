@@ -42,23 +42,20 @@ HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=magenta,fg=white,bold'
 HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_NOT_FOUND='bg=red,fg=white,bold'
 HISTORY_SUBSTRING_SEARCH_GLOBBING_FLAGS='i'
 
-if [[ -f $CONFIGDIR/plugins/zsh_codex/zsh_codex.plugin.zsh ]]; then
-    source $CONFIGDIR/plugins/zsh_codex/zsh_codex.plugin.zsh
-    [[ -o zle ]] && bindkey '^X' create_completion
-fi
-
 [[ -f "$CONFIGDIR/lib/key-bindings.zsh" ]] && source "$CONFIGDIR/lib/key-bindings.zsh"
 [[ -f "$CONFIGDIR/lib/theme-and-appearance.zsh" ]] && source "$CONFIGDIR/lib/theme-and-appearance.zsh"
-# zsh plugins
-[[ -f "$CONFIGDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$CONFIGDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
 [[ -f "$CONFIGDIR/plugins/zsh-completions/zsh-completions.plugin.zsh" ]] && source "$CONFIGDIR/plugins/zsh-completions/zsh-completions.plugin.zsh"
-[[ -f "$CONFIGDIR/plugins/history-substring-search/zsh-history-substring-search.zsh" ]] && source "$CONFIGDIR/plugins/history-substring-search/zsh-history-substring-search.zsh"
-[[ -f "$CONFIGDIR/plugins/fzf-tab/fzf-tab.plugin.zsh" ]] && source "$CONFIGDIR/plugins/fzf-tab/fzf-tab.plugin.zsh"
-[[ -f "$CONFIGDIR/plugins/forgit/forgit.plugin.zsh" ]] && source "$CONFIGDIR/plugins/forgit/forgit.plugin.zsh"
-[[ -f "$CONFIGDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$CONFIGDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 autoload -Uz compinit
 compinit -d "$HOME/.cache/zsh/.zcompdump"
+
+[[ -f "$CONFIGDIR/plugins/fzf-tab/fzf-tab.plugin.zsh" ]] && source "$CONFIGDIR/plugins/fzf-tab/fzf-tab.plugin.zsh"
+
+[[ -f "$CONFIGDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && source "$CONFIGDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"
+[[ -f "$CONFIGDIR/plugins/history-substring-search/zsh-history-substring-search.zsh" ]] && source "$CONFIGDIR/plugins/history-substring-search/zsh-history-substring-search.zsh"
+[[ -f "$CONFIGDIR/plugins/forgit/forgit.plugin.zsh" ]] && source "$CONFIGDIR/plugins/forgit/forgit.plugin.zsh"
+[[ -f "$CONFIGDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && source "$CONFIGDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
@@ -156,12 +153,12 @@ set_classic_mode() {
 }
 
 #If history substring does not work, find out what arrows are (usually ^[[A) and hardcode them below
-if [[ -n "${terminfo[kcuu1]}" && -n "${terminfo[kcud1]}" && -o zle ]]; then
-    bindkey "${terminfo[kcuu1]}" history-substring-search-up
-    bindkey "${terminfo[kcud1]}" history-substring-search-down
-else
+# add macOS arrows
+if [[ -o zle ]]; then
     bindkey "^[[A" history-substring-search-up
     bindkey "^[[B" history-substring-search-down
+    bindkey "^[OA" history-substring-search-up
+    bindkey "^[OB" history-substring-search-down
 fi
 
 if [[ "$(tty)" == "/dev/tty"* || "$OLDTERM" == "linux" || "$OLDTERM" == "xterm" || "$OLDTERM" == "dumb" || "$TERMINAL_EMULATOR" == "JetBrains-JediTerm" ]]; then
